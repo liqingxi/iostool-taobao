@@ -1,0 +1,9 @@
+Package: com.yourcompany.springboardhook
+Name: springboardhook
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: An awesome MobileSubstrate tweak!
+Maintainer: aa aaa
+Author: aa aaa
+Section: Tweaks
+Depends: mobilesubstrate (>= 0.9.5000)
