@@ -5,15 +5,6 @@
 
 %config(generator=MobileSubstrate);
 
-
-%ctor {
-	unsetenv("DYLD_INSERT_LIBRARIES");
-	NSLog(@"[taobao]injected!");
-    void* p = MSFindSymbol(NULL, "_TBMainEntry");
-    NSLog(@"[taobao]TBMainEntry: %p", p);
-
-}
-
 #define TMP_DIR(n) ([NSTemporaryDirectory() stringByAppendingPathComponent:n])
 
 // %hook NetworkDemote
@@ -26,24 +17,24 @@
 - (id)initWithURL:(id)arg1{
     NSLog(@"arg1 class,arg1:%@,%@",[arg1 class],arg1);
     // https://guide-acs.m.taobao.com/gw/mtop.alibaba.ucc.oauthlogin/1.0
-    // if ([[[self url] absoluteString] containsString:@"hmtop.alibaba.ucc.oauthlogin"]){
-    //     return nil;
-    // }
-    // if ([[[self url] absoluteString] containsString:@"mtop.alibaba.ucc.taobao.apply.usertoken"]){
-    //     return nil;
-    // }
+    if ([[[self url] absoluteString] containsString:@"hmtop.alibaba.ucc.oauthlogin"]){
+        return nil;
+    }
+    if ([[[self url] absoluteString] containsString:@"mtop.alibaba.ucc.taobao.apply.usertoken"]){
+        return nil;
+    }
     return %orig;
 }
 
-// - (void) startAsynchronous{
-//     if ([[[self url] absoluteString] containsString:@"hmtop.alibaba.ucc.oauthlogin"]){
-//         return;
-//     }
-//     if ([[[self url] absoluteString] containsString:@"mtop.alibaba.ucc.taobao.apply.usertoken"]){
-//         return;
-//     }
-//     return %orig;
-// }
+- (void) startAsynchronous{
+    if ([[[self url] absoluteString] containsString:@"hmtop.alibaba.ucc.oauthlogin"]){
+        return;
+    }
+    if ([[[self url] absoluteString] containsString:@"mtop.alibaba.ucc.taobao.apply.usertoken"]){
+        return;
+    }
+    return %orig;
+}
 
 // - (id)response{
 //     if ([[[self url] absoluteString] containsString:@"https://guide-acs.m.taobao.com/gw/mtop.relationrecommend.mtoprecommend.recommend/1.0"]){
@@ -115,3 +106,19 @@
 // 	}
 // 	return %orig; // Call the original implementation of this function
 // }
+
+
+%ctor {
+	unsetenv("DYLD_INSERT_LIBRARIES");
+	NSLog(@"[taobao]injected!");
+    void* p = MSFindSymbol(NULL, "_TBMainEntry");
+    NSLog(@"[taobao]TBMainEntry: %p", p);
+
+    dispatch_after(
+        dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)),
+        dispatch_get_main_queue(), ^{
+            %init;
+        }
+    );
+
+}

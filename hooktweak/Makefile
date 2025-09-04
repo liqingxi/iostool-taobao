@@ -9,8 +9,8 @@ TWEAK_NAME = testtweak
 
 ARCHS = arm64
 
-# testtweak_FILES = Tweak.x
-testtweak_FILES = Tweak.m
+testtweak_FILES = Tweak.x
+# testtweak_FILES = Tweak.m
 
 testtweak_CFLAGS = -fobjc-arc
 
